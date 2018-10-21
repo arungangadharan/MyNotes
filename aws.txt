@@ -1,42 +1,55 @@
 Region is a geographical location
 Avalability zone is a Data center. A region can have multiple AZs (2 or more)
 Edge location is used for caching services. it consists of Clound Front - amaxon's content delivery network
+
+COMPUTE
+--------
 EC2 is elastic cloud service - only VMs
 EC2 Container service - is docker services
 Elastic bean stack is for someone who does not know AWS
 Lambda - does things for you. You need to worry only about code. Text over image
 Lighsail will give you a fixed IP adress + RDP/SSH access
 Batch : Batch computing
+
+STORAGE
+-------
 S3 - simple storage service. upload data into bucket
 EFS : elastic file system
 Glacier : data archiving
 snowball - bring large data to data center; it is a physical device
 storage gateway is put in DC or headoffice, which will be replicating data in S3
 
+DATABASE
+-------
 RDS : relation database service, any RDBMS
 Dynamo DB : non relational DB
 Elasticache : cache queries
 Red Shift : Intelligence - complex queries
-
 AWS migration hub : tracks migration of applications to AWS
 application discovery service : detects applications and dependencies
 DB migration services - for DB migration
 server migration service : helps in migrating services to AWS
 
+NETWORKING
+----------
 VPC : virtual private cloud - network configurations
 Cloud Front - content delivery network
 Route 55 - DNS service
 API gateway : creating your APIs for other service
 Direct Connect : dedicated line from different networks
+
+DEVELOPER TOOLS
+---------------
 Code Star : project code management- CI/CD
 Code Commit : code storage. source control
 Code Build : compile and test
-
 Code Deploy - code deployment
 Code pipeline - CD system
 X-ray : for debugging
 Cloud 9 : IDE for development
 
+MANAGEMENT
+----------
 cloud watch: monitoring services
 cloud formation : way of scripting infrastructure
 cloud trail : log changes to AWS environment
@@ -86,6 +99,8 @@ Web application firewall : application layer security
 Shield : prevents D-DOS attacks
 Artifact : portal for AWS compliance report
 
+MOBILE SERVICES
+--------------
 Mobile Hub : management console for mobility apps services
 Pinpoint : way to use targetted push notifications
 AWS AppSync : Updates data in web and mobile application platforms
@@ -117,7 +132,8 @@ green grass : s/w local compute messaging, interfacing capabilities
 
 Game lift : service to develop games
 
-
+DETAILS
+=========
 IAM
 - Centralized control of your AWS account
 - shared access to your AWS account
@@ -167,15 +183,12 @@ S3
 	- expedited :  retrieval takes only few minutes
 	- Standard : retrieval takes 3-5 hours
 	- Bulk : Retrieval takes 5-12 hours
-
 Charging for
 	- storage
 	- requests made to the resource
 	- Storage management pricing : Who owns and who can access
 	- Data transfer pricing : for transferring across different regions
 	- tranfer acceleration : for using high speed transfer network in amazon
-	
-
 - versioning cannot be disabled (once enabled), only suspended
 - frequent changing does not need versioning
 - upload the same file again, it gets saved as a different version
@@ -184,7 +197,6 @@ Charging for
 - if the file is deleted, it is still available in version with a tag ' with a delete marker'. if we go and delete the file of that kind, it just deletes the delete marker and restores the original file. So the front end delete does not delete the file. since it maintains multiple versions of the same file, it is not ideal to enable versioning of frequently changing files
 - MFA delete is an option to enable multi factor authentication for versioning and delete operations. this can make the operations secure
 - this stops people from accidently deleting files
-- 
 
 Cross region replication
 - to enable this, we need to have versioning enabled first
@@ -193,7 +205,7 @@ Cross region replication
 - it also requires an IAM role.
 - when you enable replocation, only new and modified objects are going to be moved to the new bucket
 - how do copy objects of one bucket to another bucket. this is easy to do over command line
--
+
 
 AWS CLI
 - add a usr through UI
@@ -206,7 +218,6 @@ AWS CLI
 - Update operations also get updated in destination bucket
 - deleting a latest version in source does not delete a verrsion in destination
 - replication cannot be done across multiple buckets
-- 
 
 Configuring transtions
 - this canconfigure to move current version to stanard IA after a certain period and then to glacier
@@ -215,4 +226,34 @@ Configuring transtions
 - add transition to the current version. can just say transition the current version to IA after 30 days and to glacier after 60 days
 - can do the same with previous versions as well
 - also we can say object expiry. Can say that object to be marked as expired after a period of time
-- 
+
+
+
+Cloud front/CDN
+- CDN is a system of distributed servers (network) that deliver web pages and other web contet to a user based on the geographic locations of the user, the origin of the web page and content delivery server
+- Edge location is the place where data is cached, Orgin is where data is originally saved. Distribution is the network of edge locations
+- when a user accesses data in a remote location, at first the data fecthing is slow. howver after first fectch, the data get stored in an edge location. After that, repeated request will fetch data from the edge location only.
+- edge locations support write operations as well. You can create an object in an edge location and it gets automatically replicated in origin
+- set a TTL for an object : Time to Live. once that's done, the object will be available in cache. it cannot be removed till TTL completes. However, you can clear the cache, however you will be charged for that.
+
+- to create a distribution
+	- go to cloud front
+	- create distribution; there are two types - web and RTMP. web uses HTTP/HTTPS communication. RTMP is for adobe tools
+	- Origin domain name is the name of the origin bucket
+	- Origin path is a folder within bucket
+	- Origin ID is just a name
+	- restrict bucket access - says that public cannot access the content using the origin bucket URI. everyone has to use edge location for that
+	- Origin access identity - need to check
+	- Grant Permissions on bucket -if yes, it automatically updates policy file
+	- Path pattern can be used to mention the type of file accessible
+	- viwer protocol policy can be used to mention HTTP, re-direct HTTP folks to HTTPS or HTTPS only
+	- Allowed HTTP methods. mention allowed HTTP methods (GET, POST..etc)
+	- Can mention caching mechanism - custom ot orgin cache headers
+	- can mention minimum and maximum TTL (time to live). this should be in seconds
+	- restrict viewer access(use signed URLs or signed cookies )- need to check
+	- AWS WAF Web ACL is for restricting access  - need to check
+	- CNAMEs are alternate human readble name - generated names are tough to read
+	- custom error pages possible -> under error pages tab
+	- geography based restrcition also is possible - under Restrictions tab
+	- geo- restrictions - you can either white list or black list
+	- invalidations - for invalidatig objects from an edge locations
