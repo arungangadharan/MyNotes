@@ -257,3 +257,49 @@ Cloud front/CDN
 	- geography based restrcition also is possible - under Restrictions tab
 	- geo- restrictions - you can either white list or black list
 	- invalidations - for invalidatig objects from an edge locations
+
+
+Security and Encryption
+- bucket related restrcitions can be applied using bucket policies and ACLs
+- buckets can have access logs which logs all requests made to a bucket. This logging can be configured to another bucket
+- encryption can be done
+	- in transit (while sending data into the buckets)
+		- using SSL/TLS
+	- At Rest
+		- server side encryption
+			- S3 managed keys - SSE S3
+			- using AWS Key management service, Managed keys - SSE - KMS. envelo key, audit trail of key access
+			- with customer provided keys - SSE-C
+		- Client side encryption
+
+Storage Gateway (This needs re-look)
+-  this is used for syncing your on-premise server data with AWS services. this Data will be moved to IA and then to Glacier
+- you get storage gateway as a VM image - it supports MS Hyper-V or VMware ESXI
+- there are four types of storage gateways
+	- File gateways (NFS)
+		- NFS will be mounted on App server machine
+		- App server connects to the Storage gateway VM - which connects to Amazon S3 using internet or Direct connect or Amazon VPC
+	- Volume gateways (iSCSI) : not for flatfiles, block based storage
+		- Data will be written to a virtual  HDD which will be backed up as point-in-time snapshots of your volumes and stored in clliud as 		Amazon EBS snapshots. this is just incremental back up - only covers changes - and also compressed
+		- Stored Volumes : entire data on premise
+			- entire data is written on your on-premise data storage which gets backed up as Amazon ESBs.size possible is 1 GB - 16 GBs
+		- Cached volumes : only recently accessed data is kepy on premise. Majority of the data is in S3. so the on-premise h/w requirement is 		less
+	- Tape gateways (VTL) : virtual tapes - use lifecycle to glacier 
+		- back of the data is done using NetBackup, Backup Exec or Veeam which will be connected to gateway VM using iSCSI, which in turn will be 		backed up in S3 and follows life cycle
+	 			 
+Snob Ball
+- when you want to send huge amount of data, you use and external transferrable device. This is called snow ball. This is more like an external HDD. deals with peta bytes of data.
+- Three types
+	- Standard snow ball
+		- 80 TB is available. tamper resistant enclosures, 256 bit encryption, ad comes with industry trusted platform module (TPM), to ensure 		both security and full chain of custody of your data (you will be able to know where snow-ball at this moment is
+	- Snowball edge
+		- 100 TB. like snowball standard, but has computing capabilities as well. Use case : airlines. Edge can be used to monitor airline engine 		and when it lands, it can be send to AWS center
+	- snowmobile
+		- more like a truck. Capacity 100 peta bytes. 
+- order a snowball. connect power and network
+- install CLI for snowball
+- get credentials - oyu get client unlock key and manifest file
+- ./snowball start -i 192.168.1.116 -m <manifest file> -u <unlock key>
+- snowball cp hello.txt s3://<bucket name from snow ball details - browser>
+- ./snowball stop
+- do arrangement for sending snowball back to AWS
