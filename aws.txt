@@ -25,13 +25,16 @@ RDS : relation database service, any RDBMS
 Dynamo DB : non relational DB
 Elasticache : cache queries
 Red Shift : Intelligence - complex queries
+
+Migration
+---------
 AWS migration hub : tracks migration of applications to AWS
 application discovery service : detects applications and dependencies
 DB migration services - for DB migration
 server migration service : helps in migrating services to AWS
 
-NETWORKING
-----------
+NETWORKING & Content delivery
+-----------------------------
 VPC : virtual private cloud - network configurations
 Cloud Front - content delivery network
 Route 55 - DNS service
@@ -60,6 +63,8 @@ Systems manager : patch maintainance sort of things
 trusted advisor : gives advices by analyzing the AWS environment
 Managed services : manages services
 
+Media services
+--------------
 elastic transcoder : video processing like widening
 media covert :firewall based to transcoding. 
 Media live : live video streams
@@ -67,6 +72,8 @@ Media Package : video over internet
 Media Store : storage for video
 Media tailor : adding ads to video streams
 
+Machine Learning
+----------------
 Sage maker : deep learning
 comprehend : sentiment analysis
 deeplens : AI camera
@@ -77,6 +84,8 @@ rekognition : says what is in an uploaded file
 amazon translate : transalator
 transcribe : automatic speech recognition
 
+Analytics
+-----------
 athena : runs SQL queries
 EMR : elastic map reduce : for big data solutions
 cloud search
@@ -87,6 +96,8 @@ quick sight : BI tool
 Data pipeline : moving data between different AWS services
 Glue : ETL tool service
 
+Security, Identity and Compliance
+----------------------------------
 IAM : Identity access management - 
 cognito - device authentication
 GuardDuty : monitors malicious activities
@@ -107,29 +118,45 @@ AWS AppSync : Updates data in web and mobile application platforms
 Device farm : testing application in multiple devices
 Mobile analytics : Analytics for mobile apps
 
+AR & VR
+-------
 Sumerian : language for AR/VD/3D application design
-ready player one
+"ready player one"
+
+Application Integration
+-----------------------
 step function : way of managing lander functions
 MQ : message queues
 SNS : Notification service
 SQS : decoupliging infra
 SWF : simple workflow service - create simple workflows
+
+Customer engagement
+-------------------
 Connect : Call center in cloud
 Simple email service: email service - sending large amounts of emails
 
+Business Productivity
+--------------------
 Alexa for business : lot of automation of services, like booking a CR..etc
 Chime : Video conferecncing
 work docs - drop box for work related data
 work mail : using email through amazon
 
+Desktop & App streaming
+----------------------
 workspaces : VDI solutions
 app steam 2.0 : streaming actual applications like citrix
 
+Internet of Things
+-----------------
 iOT
 iot device management
 amazon free RTOS - OS for micro controllers
 green grass : s/w local compute messaging, interfacing capabilities
 
+Game development
+-----------------
 Game lift : service to develop games
 
 DETAILS
@@ -303,3 +330,22 @@ Snob Ball
 - snowball cp hello.txt s3://<bucket name from snow ball details - browser>
 - ./snowball stop
 - do arrangement for sending snowball back to AWS
+
+S3 ransfer acceleration
+- this is used for improving your upload speed. Instead of uploading directly to S3 bucket, we will upload it to an edge location which will be transferred to S3 location
+- You will get a edge location URL for it -> <bucket name>.s3-accelerate.amazonaws.com
+- go to your bucket, properties > Transfer acceleration - just enable it
+- there is a link provided, which gives the details of the acceleration provided
+
+creating statis web site
+- create a bucket
+- If you want to use URL to configure in Route53, you have to give the same domain name in Route 53 (DNS name) as well.
+- once the bucket is created, go to properties -> static website hosting
+- The URL will be http://<name given in the bucket>.s3-website-<region name>.amazonaws.com
+- click 'use this bucket to host a website'
+- give index document - front web page
+- also give error page
+- upload html files of the same names
+- 
+ 
+- 
