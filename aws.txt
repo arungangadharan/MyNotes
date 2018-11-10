@@ -346,6 +346,226 @@ creating statis web site
 - give index document - front web page
 - also give error page
 - upload html files of the same names
+
+EC2
+====
+- on demand : fixed rate by hour (or second) without any commitment
+	- used for users without up-front payment and long term commitment
+	- applications with short term, spiky or un predictable workloads which cannot be interrupted
+	- first timers
+	- 
+- Reserved : capacity reservation with discount on hourly charges for an instance. 1 year or 3 years
+	- applicatoins with steady state or predictable use
+	- that requires reserved capacity
+	- up front payment to make profit
+	- we can change the plans from CPU intense to memory intense
+	- 
+- Spot : enabled you to bid the price for the instance you want to purchace
+	- onyl for a specific time
+	- very cheap
+	- 
+- dedicated hosts : dedicated one. reduces the cost by allowing you to use existing server-bound s/w licenses
+	- does not support multi tenancy
+	- can be purchased hourly
+Letters shows the family, numbers the version
+- F1 : Field programming gateway : Genomic research, financial analytics, real time video processing, big data
+- I3 : High speed storage : NoSQL DBs, data warehousing
+- G3 : Graphics intensive : Video encoding/ 3D application streaming
+- H1 : High Disk throughput : Map reduce based work loads, distributed file systems such as HDFS and MapR-FS
+- T2 : Lowest cost, general purpose : Web server, Small DBs
+- D2 : Dense storage : File servers, Data warehousing, Hadoop
+- R4 : Memory optimized : Memory intensive Apps/DBs
+- M5 : General purpose : App servers
+- C5 : Compute optimized : CPU intensive Apps/DBs
+- P3 : Graphics/General purpose GPU : Machine learning, Bit coin mining
+- X1 : Memory optimized : SAP HANA/Apache Spark
+
+DR. MC GIFT PX
+D - Density
+R - RAM
+M - Main choice for gerenal purpose apps
+C - Compute
+G - Graphics
+I - IOPS
+F - FPGA
+T - cheap general purpose (Think T2 micro)
+P - Graphics (Think pics)
+X - Xtreme memory
+
+FIGHT DR MC PX
+
+EBS stands for elastic block storage
+drive where OS installed is called root
+EBS volume types
+- general purpose SSD (GP2)
+	- ratio of 3 IOPS per GB with upto 10,000 IOPS and abilit to burst up to 3000 IOPS for extended periods of time for volumes at 3334 GiB and above
+- Provisioned IOPS SSD (IO1)
+	- where you needs more than 10000 IOPS - 20000 IOPS
+- Throughput optimized HDD (ST1)
+	- big data, data warehouse, log processing
+- Cold HDD 
+	- lowest cost storage for infrequent access
+- Magenetic
+	- cheapest
 - 
+
+- VPC stands for virtual private cloud
+- one sub-net is mapped to one availability zone
+- there is option to stop accidental termination
+- detailed monitoring means monitoring per minute, usual is every five minutes
+- boot strap scripts can be passed through advanced options
+- root volume could be general purpose SSD, provisioned IOPS SSD or magnetic
+- EBS volume can be general purpose SSD, provisioned IOPS SSD, Cold HDD, Throughput optimised HDD or magnetic
+- usually root volumes cannot be encrypted. for that, we need to use a third party tool. or can be done using AMI's in the AWS console or uding API
+- if you are using through windows, you need a putty
+- user for connecting is ec2-user
+- downloaded private key file is .pem, however to use with Putty, you got to convert it to .ppk format
+- user puttygen application for that
+- yum update is required for getting updates; always do that
+- to create a static page, place the page in server using TCP
+- yum install httpd -y
+- service httpd start
+- any change we do to security group reflects immediately
+- security groups are made for restricting access to servers
+- all the rules, we set for security group will be applicable for all its members
+- all inboud rules have automtic out bound rules; you need not set that explicitly. security groups are stateful unlike ACL
+- "all servers" are mapped as '0.0.0.0/0"
+- all protocals are blocked by dafault, you can only make them available 
+- if you want to block IP, use ACL
+- we cannot have EC2 instance in one availability zone and its respective ESB volume in another availability zone
+- standard volume types cannot be modified; they are just magnetic and the oldest
+- if you want to copy one volume to another availability zone, create a snap shot > create a volume > select another availability zone
+- Also, we can move the snapshot to another region
+- Also you can create an image (AMI) out of snapshot; same image can be made out of the EC2 instance directly
+- this AMI can be moved across to another region
+- deleting EC2 instance only deletes root volume. for deleting other volumes, you have to explicitly do it
+- you cannot share encrypted volumes or make it public
+
+- RAID : Redundant Array of Independent Disks
+- this is a set of disks actting as a single disk
+- RAID 0 : this is a series of disks with high performance. However if we lose of data of one disk, we will lose entire data
+- RAID 1 : is with redundancy. One disk is mirrored into another disk. this is safer
+- RAID 5 : is when you have multiple disk and you create a checksum. if one disk fails, data can be recreated from this checksum. Amazon discourages usage of this
+- RAID 10 : is a combination of RAID 1 and 0. This is striped and mirrored. has good performance and good redundancy
+- In AWS, you create a series of volume and RAID it
+- for doing anything with RAID, edit the security group and add RDP
+- when you are using wondows, password you have to get explictly. there is option available along with instance list
+- you create windows disks, login to windows and delete partitions. after that right click and mention as RAID 5 and done
+- when you take a snapshot of a RAID, you may lose the cached data. This can be solved by putting application consistent snapshot. for that:
+	- you have to stop all app writings
+	- flush the cache
+this can be achieved using
+	- freeze the file system
+	- unmount the RAID array
+	- shutting down the associated EC2 instances
+	- take the snapshot
+= You cam take an AMI of root folder of the EC2 instance created, encrypt ( encrypt while copying the AMI) and copy to another region. Start that instance and you get a EC2 instance running in amother region
+- also we an purchase the AMIs from market place
+- you select AMI based on 
+	- Region
+	- OS
+	- Architecture
+	- Launch Permissions
+	- Storage for the root device
+		- Instance store (EPHEMERAL storage) : root volume is from an AMI instance created from a template stored in Amazon S3
+		- EBS backed volumes :root device is launched from the AMI is an Amazon EBS volume created from an Amazon snapshot
+- instance based stores are based on VM. so if the host fails, the instance also fails. it is less durable
+- instance volumes cannot be stopped
+- insance volume stopping can lose the data, but ESB does not
+- while stopping the instance, EBS can ask to kee the root volume
+
+39)
+- Load balancers
+	- Application load balancers
+	- Network load balancers
+	- Classic load balancers
+- application load balancers are intelligent. here one set of service will be given for a spcific job.load balancer will understand the request type and will route the request to the righ set. Tesla model X set of services manages, Model X service reqquests and Mdel M services manage M requests. They work on layer 7
+- network load balancers are maintained for extreme performances. will be able to handle millions of requests with minimu network latency. They work on layer 4. Tesla roadster
+- classic load balancers are a mix of both. this uses the properties of layer 4 like sticky sessions and x-forwarded. also uses layer 4 balancing for applications that rely prely on the TCP protocol. These are usually called Elastic load balancers (ELBs)
+- if you get a 504 error in classic load balancer, it means that your server is taking too much time to respond. This could be due to application of DB
+- when your app server is behind your load balancer, your application server only gets the private IP (IP of the load balancer). This is not the right thing, since the application server gets a lot of information from the original IP. The original IP, we get as part of 'X-forwarded-for' header.
+- health status check - can be done by creating a load balancer and assigning health check routine
+- response time out : time till which it should wait for response
+- interval : how often you should ping
+- Unhealthy threshold : how many concecutive times you have to check before declare service as unhealthy
+- healthy threshold : How many concecutive times you have to check before you declare service as healthy
+- for a load balancer, you always get a DNS name - not IP
+
+
+Cloud watch
+- standard monitoring is 5 minutes, detailed is one minute
+- management tools > cloud watch
+- under cloud watch, you can create dashboards
+- add widgets to dashboard
+- by default following metrices are available
+	- CPU Credit Balance, CPU Credit Usage, CPU Utiliztion
+	- Disk Read Bytes, Disk Write Bytes,Disk Read Ops, Disk Write Ops
+	- Network In, Network Out, Network packets in, Network packets out
+	- Status check Failed, Status check Failed Instance, Status check Failed System
+- You can configure mail alert system for resources
+- Also you can configure state change alerts for resources
+- whenever a resource state changes, you can configure to add an event to even stream and route them to take a specific action
+- Also, you can use rules to take action on a pre-determined schedule 
+- cloud watch is for monitoring and cloud trail is for auditing  
  
+
+42)AWS CLI
+- create an EC2 instance
+- create IAM > user with programatic access
+- attach administrator policies to the user
+- get access key id and secret access key
+- do ssh to AWS (ssh ec2-user@<ip address>
+- aws configure
+- give access key id
+- give secret access key
+- give correct region
+- give output format as blank
+- aws s3 ls -> lists all buckets
+- aws s3 help -> lists all aws commands
+- mb command is for making a bucket
+- cd ~ > cd .aws - you can see aws credentials saved in a file
+- aws ec2 describe-instances - will list all instances running in EC2
+- aws ec2 terminate-instances --instance-ids <instance id> - will stop the aws instance
 - 
+
+43) Identity Management roles
+- go to IAM > roles
+- you can allow users from other platforms like FB, to login to AWS using 'Role for identity procvider access'
+- select the role type
+- select policy
+- role name and review
+- all roles are global
+- we can attach a role to a running instance
+- you can either create a user or role for an EC2 instance. if you are using user, your credentials will be locally stored inside ~/.aws folder, which is a security threat. instead you can use role, which does not save any credentials locally. when you create user, you keep IAM role as none
+
+44)S3 CLI
+- if you want to copy any data outside your region, use region flag
+- aws s3 cp --recursive s3://acloudguru-euwest2 /home/ec3-user --region eu-west-2
+
+45) Bash scripting lasb
+- while configuring EC2, under 'Configue Instance' tab, put start up script under 'Advanced Details' > user data. this will be executed every time the instance starts
+- aws s3 cp s3://<bucket name>/index.html /var/www/html
+
+46) EC2 instance metadata
+- metadata of EC2 instance will be available under -
+curl http://169.254.169.254/latest/meta-data/
+curl httlp://169.254.169.254/latest/user-data :- will get you your boot strap script
+
+47)Launch configurations and Auto scaling groups
+- auto scaling is an option to given to server - more like fault tolerence system
+- Auto scaling : EC2 dashboard > Auto Scaling > Launch Configuration
+- you can just select the number of instances. Based on that multiple instances will be deployed
+- while creating the auto scaling group, we can define the rule. we can say that if the CPU utlization is greater than 90 % one instance has to be launched. then we need to wait for a cooling period and repeat the process. this will be repeated till we have launched all instances
+
+48)Placement groups
+- placement groups are of two kinds :
+	- clustered placement group
+	- spread placement group
+- clustered placement group is default and it is always in a single availability zone
+- spread placement groups machines are placed under different set of hardare independent of each other
+- all members of a placment group should be homogenous
+- cant merge placement groups
+- cant move an existing instance to a placement grou[
+- only certain set can be placed in placement groups - compute optimized, GPU, memory optimized, storage optimized
+
+ 
