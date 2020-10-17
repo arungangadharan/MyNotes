@@ -1,0 +1,123 @@
+Installing Apache Air Flow
+
+Install Ubuntu in your windows machine
+=======================================
+ 1. Go to windows store and install Ubuntu
+ https://www.microsoft.com/store/productId/9NBLGGH4MSV6
+
+ 2. Try lanching, if it fails with message "Elevated permissions are required to run DISM",
+ 	> run command prompt as administrator, type powershell (or open power shell)
+	> run command "dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart"
+	> run command "dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart"
+	> restart your machine and ubuntu should start
+	> Ref: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+Launch Ubuntu
+
+Installing PIP
+==============
+1. Run following commands in Ubuntu
+	sudo apt-get install software-properties-common 
+	sudo apt-add-repository universe
+	sudo apt-get update
+	sudo apt-get install python-setuptools
+	sudo apt install python-pip
+	If this command throws error stating that "unable to locate package python-pip"
+		> run ls /bin/python*
+		> find the latest version of python
+		> upgrade command based on that "sudo apt install python3-pip"
+	sudo -H pip install --upgrade pip
+	sudo pip -v to verify pip installation
+2. Install PIP dependencies
+	sudo apt-get install libmysqlclient-dev 
+	sudo apt-get install libssl-dev 
+	sudo apt-get install libkrb5-dev 
+	sudo apt-get install libsasl2-dev
+
+Install & Configure Postgres
+============================
+Install Postgres for airflow
+	sudo apt-get install postgresql postgresql-contrib
+start postgres
+	sudo service postgresql start
+check the status of postgres clustre
+	pg_lsclusters
+get the details from the response and run the following command
+	sudo pg_ctlcluster <version> <cluster> start
+the status should say, it is running
+Now need to create DB
+	sudo -u postgres psql
+create profile and assing roles
+	CREATE ROLE ubuntu;
+	CREATE DATABASE airflow;
+	GRANT ALL PRIVILEGES on database airflow to ubuntu;
+	ALTER ROLE ubuntu SUPERUSER;
+	ALTER ROLE ubuntu CREATEDB; 
+	ALTER ROLE ubuntu LOGIN;
+	GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to ubuntu;
+set password for the user
+	\password ubuntu
+\q to quit
+connect to postgres again
+try connecting to DB using \c airflow
+try checking connection using \conninfo
+cd /etc/postgresql/*/main/
+ls
+sudo nano pg_hba.conf
+Modify the line underneath #IPv4 local connections to 0.0.0.0/0
+Type Ctrl + S to save and Ctrl + X to exit.
+sudo nano postgresql.conf
+Under the “CONNECTIONS AND AUTHENTICATION” section, modify the following
+listen_addresses = ‘*’ 
+Type Ctrl + S to save and Ctrl + X to exit.
+sudo service postgresql restart
+cd ~
+
+Install air-flow
+================
+sudo SLUGIFY_USES_TEXT_UNIDECODE=yes pip install apache-airflow
+export PATH=$PATH:/home/<username>/.local/bin
+airflow initdb
+cd airflow
+ls
+sudo nano airflow.cfg
+Make the following changes
+	dags_folder = /mnt/c/dags
+	base_log_folder = /mnt/c/dags/logs
+	executor = CeleryExecutor
+	load_examples = False
+	expose_config = True
+	sql_alchemy_conn = postgresql+psycopg2://ubuntu:<password>@localhost:5432/airflow
+	broker_url = amqp://guest:guest@localhost:5672//
+	result_backend = amqp://guest:guest@localhost:5672//
+create folders
+	/mnt/c/dags
+	/mnt/c/dags/logs
+
+airflow initdb
+If you receive an error relating to the psycopg2 package, run the following commands to correct this issue:
+	sudo apt-get update -y
+	sudo apt-get install -y libpq-dev
+	pip install psycopg2
+
+Install RabbitMQ
+=================
+sudo apt install rabbitmq-server
+sudo nano /etc/rabbitmq/rabbitmq-env.conf
+Change NODE_IP_ADDRESS=0.0.0.0
+sudo service rabbitmq-server start
+
+Install Celery
+===============
+sudo pip install 'celery>=3.1.17,<4.0'
+airflow initdb
+
+Run Air-flow
+=============
+Open two prompts and run
+	airflow webserver -p 8080
+	airflow scheduler
+Open browser
+
+if you want to see the examples, make load_examples = True
+
