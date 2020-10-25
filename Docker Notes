@@ -16,3 +16,8 @@ How to craete and run a spring boot docker
   docker build -t <docker-name> .
 8. run the image using
   docker run -p 8080:8080 -t <docker-name>
+ 
+ 
+You cannot run docker from Linux installed in WSL. So install Docker for Windows. Go to Settings, enable "Expose daemon on tcp://localhost:2375 without TLS" option and dial from Linux using
+  docker -H localhost:2375 run
+
