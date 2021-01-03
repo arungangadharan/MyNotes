@@ -1,0 +1,247 @@
+Java 8 fearures
+
+Functional Programming
+=====================
+1. Pure functions : Pure functions operate independently from state outside of the function, so they shouldn’t rely on global state, or variables outside of itself. The function should not have any dependency on variable outside the function
+2. Immutability : Function should not manipulate anything inside the function. For changes, it should make a copy and change. Should not change the original data
+3. First-class functions : In functional programming, our functions are first-class, which means we can use them like any other value. We can create arrays of functions, pass them as arguments to other functions, and store them in variables.
+4. Higher-order functions: Higher order functions are functions that do one of two things: they either take a function as one or more of its parameters, or they return a function. There are many of the first type of higher-order functions built into JavaScript — like map, reduce, and filter which we can use to interact with arrays. Filter is used to return a new array from an old one that contains only values that fit a condition, which we provide.\
+
+Functional Interfaces And Lambda Expressions
+=============================================
+@FunctionalInterface
+public interface MyFirstFunctionalInterface {
+    public void firstWork();
+}
+You can omit the annotation, @FunctionalInterface and your functional interface will still be a valid one. We use this annotation only to inform the compiler that the interface will have a single abstract method.
+By definition, default methods are Non-abstract and you can add as many default methods in the functional interface as you like. Secondly, if an interface has an abstract method that overrides one of the public methods of “java.lang.object” then it is not considered as the interface’s abstract method.
+
+A Lambda Expression (or function) can be defined as an anonymous function, (a function with no name and an identifier). Lambda Expressions are defined exactly in the place where they are needed, usually as a parameter to some other function.
+
+Let’s implement a program that demonstrates Lambda Expressions.
+
+interface MyInterface 
+{ 
+     void abstract_func(int x,int y); 
+ 
+     default void default_Fun() 
+    { 
+         System.out.println("This is default method"); 
+    } 
+} 
+ 
+class Main 
+{ 
+     public static void main(String args[]) 
+    { 
+        //lambda expression
+        MyInterface fobj = (int x, int y)->System.out.println(x+y); 
+ 
+        System.out.print("The result = ");
+        fobj.abstract_func(5,5); 
+        fobj.default_Fun();
+    } 
+}
+Output:
+
+lambda expression - output
+
+forEach() Method In Iterable Interface
+=====================================
+Example of the forEach() method.
+
+importjava.util.ArrayList;  
+importjava.util.List;  
+public class Main {  
+     public static void main(String[] args) {  
+        List<String> subList = new ArrayList<String>();  
+        subList.add("Maths");  
+        subList.add("English");  
+        subList.add("French");  
+        subList.add("Sanskrit");
+        subList.add("Abacus");
+        System.out.println("------------Subject List--------------");  
+        subList.forEach(sub -> System.out.println(sub));  
+  }  
+}  
+
+Optional Class
+=============
+Java 8 introduced an optional class in the “java.util” package. “Optional” is a public final class and is used to deal with NullPointerException in the Java application. Using Optional, you can specify alternate code or values to run. By using Optional you don’t have to use too many null checks to avoid nullPointerException.
+
+The following program demonstrates the use of the Optional class.
+
+import java.util.Optional;   
+public class Main{   
+  
+   public static void main(String[] args) {   
+        String[] str = new String[10];   
+        Optional<String>checkNull =  
+                       Optional.ofNullable(str[5]);   
+        if (checkNull.isPresent()) {   
+            String word = str[5].toLowerCase();   
+            System.out.print(str);   
+         } else 
+           System.out.println("string is null");   
+    }   
+}  
+
+Default And Static Methods In Interfaces
+========================================
+In Java 8, you can add methods in the interface that are not abstract i.e. you can have interfaces with method implementation. You can use the Default and Static keyword to create interfaces with method implementation. Default methods mainly enable Lambda Expression functionality.
+
+Let’s understand the Default Method with an example:
+
+import java.util.Optional;   
+interface interface_default {
+     default void default_method(){
+         System.out.println("I am default method of interface");
+    }
+}
+class derived_class implements interface_default{
+ 
+}
+class Main{
+   public static void main(String[] args){
+        derived_class obj1 = new derived_class();
+        obj1.default_method();
+    }
+}
+
+Method References
+=======================
+The Method reference feature introduced in Java 8 is a shorthand notation for Lambda Expressions to call a method of Functional Interface. So each time you use a Lambda Expression to refer a method, you can replace your Lambda Expression with method reference.
+
+Example of Method Reference.
+
+import java.util.Optional;   
+interface interface_default {
+       void display();
+}
+class derived_class{
+ 
+    public void classMethod(){  
+            System.out.println("Derived class Method");  
+    }
+}
+class Main{
+     public static void main(String[] args){
+        derived_class obj1 = new derived_class();
+        interface_default  ref = obj1::classMethod; 
+        ref.display();
+    }
+}
+
+Java Stream API For Bulk Data Operations On Collections
+======================================================
+
+Stream is a new abstract layer introduced in Java 8. Using stream, you can process data in a declarative way similar to SQL statements. For example, consider the following SQL statement.
+
+SELECT max(salary), employee_id, employee_name FROM Employee
+
+The above SQL expression automatically returns the maximum salaried employee's details, without doing any computation on the developer's end. Using collections framework in Java, a developer has to use loops and make repeated checks. Another concern is efficiency; as multi-core processors are available at ease, a Java developer has to write parallel code processing that can be pretty error-prone.
+
+To resolve such issues, Java 8 introduced the concept of stream that lets the developer to process data declaratively and leverage multicore architecture without the need to write any specific code for it.
+
+What is Stream?
+Stream represents a sequence of objects from a source, which supports aggregate operations. Following are the characteristics of a Stream −
+
+Sequence of elements − A stream provides a set of elements of specific type in a sequential manner. A stream gets/computes elements on demand. It never stores the elements.
+Source − Stream takes Collections, Arrays, or I/O resources as input source.
+Aggregate operations − Stream supports aggregate operations like filter, map, limit, reduce, find, match, and so on.
+Pipelining − Most of the stream operations return stream itself so that their result can be pipelined. These operations are called intermediate operations and their function is to take input, process them, and return output to the target. collect() method is a terminal operation which is normally present at the end of the pipelining operation to mark the end of the stream.
+Automatic iterations − Stream operations do the iterations internally over the source elements provided, in contrast to Collections where explicit iteration is required.
+
+Generating Streams
+With Java 8, Collection interface has two methods to generate a Stream.
+
+stream() − Returns a sequential stream considering collection as its source.
+parallelStream() − Returns a parallel Stream considering collection as its source.
+
+List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl");
+List<String> filtered = strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList());
+
+forEach
+--------
+Stream has provided a new method ‘forEach’ to iterate each element of the stream. The following code segment shows how to print 10 random numbers using forEach.
+
+Random random = new Random();
+random.ints().limit(10).forEach(System.out::println);
+
+map
+----
+The ‘map’ method is used to map each element to its corresponding result. The following code segment prints unique squares of numbers using map.
+
+List<Integer> numbers = Arrays.asList(3, 2, 2, 3, 7, 3, 5);
+//get list of unique squares
+List<Integer> squaresList = numbers.stream().map( i -> i*i).distinct().collect(Collectors.toList());
+
+filter
+------
+The ‘filter’ method is used to eliminate elements based on a criteria. The following code segment prints a count of empty strings using filter.
+
+List<String>strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl");
+//get count of empty string
+int count = strings.stream().filter(string -> string.isEmpty()).count();
+
+limit
+-----
+The ‘limit’ method is used to reduce the size of the stream. The following code segment shows how to print 10 random numbers using limit.
+
+Random random = new Random();
+random.ints().limit(10).forEach(System.out::println);
+
+sorted
+------
+The ‘sorted’ method is used to sort the stream. The following code segment shows how to print 10 random numbers in a sorted order.
+
+Random random = new Random();
+random.ints().limit(10).sorted().forEach(System.out::println);
+
+Parallel Processing
+-------------------
+parallelStream is the alternative of stream for parallel processing. Take a look at the following code segment that prints a count of empty strings using parallelStream.
+
+List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl");
+//get count of empty string
+long count = strings.parallelStream().filter(string -> string.isEmpty()).count();
+It is very easy to switch between sequential and parallel streams.
+
+Collectors
+----------
+Collectors are used to combine the result of processing on the elements of a stream. Collectors can be used to return a list or a string.
+
+List<String>strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl");
+List<String> filtered = strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList());
+System.out.println("Filtered List: " + filtered);
+String mergedString = strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining(", "));
+System.out.println("Merged String: " + mergedString);
+
+Java Date Time API
+===================
+Java 8 introduces a new date-time API under the package java.time.
+
+The most important classes among them are:
+
+Local: Simplified date-time API with no complexity of timezone handling.
+Zoned: Specialized date-time API to deal with various timezones.
+Dates
+
+Date class has become obsolete in Java 8.
+
+Following are the new classes introduced:
+
+The LocalDate class defines a date. It has no representation for time or time-zone.
+The LocalTime class defines a time. It has no representation for date or time-zone.
+The LocalDateTime class defines a date-time. It has no representation of a time-zone.
+
+Nashorn JavaScript Engine
+Base64 Encode Decode
+Collection API Improvements
+Concurrency API Changes/Enhancements
+Java IO Improvements
+Miscellaneous Core API Improvements
+
+
+
+
